@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+	<head>
+		<title>.trace</title>
+		<meta charset="utf-8" />
+	</head>
+
+	<body>
+		<textarea id="code" cols="80" rows="20">console.log("Hello, World!")</textarea>
+		<pre id="result"></pre>
+
+		<script src="http://esprima.org/esprima.js"></script>
+		<script src="http://constellation.github.io/escodegen/escodegen.browser.js"></script>
+		<script src="ast.js"></script>
+		<script src="trace.js"></script>
+		<script>
+			var codeEl = document.getElementById("code");
+			var resultEl = document.getElementById("result");
+
+			var tracingCode = null;
+
+			codeEl.oninput = function(ev) {
+				try {
+					//resultEl.textContent = transformCode(codeEl.value);
+					var code = codeEl.value.split("\n").map(function (line, lineNumber) {
+						return "traceLine(" + (lineNumber + 1) + "); " + line;
+					}).join("\n");
+					var ast = esprima.parse(code);
+					var transformed = transformAST(logReadsAndWrites, ast);
+					resultEl.textContent = tracingCode = escodegen.generate(transformed);
+					resultEl.textContent += "\n--\n" + JSON.stringify(transformed, null, "  ");
+				} catch (e) {
+					console.log(e);
+					resultEl.textContent = e;
+				}
+			};
+
+			function pp(obj) {
+				return JSON.stringify(obj, null, "    ");
+			}
+
+			function transformCode(code) {
+				var lines = code.split("\n");
+				return lines.map(function(line) {
+					var m;
+					if (m = line.match(/^var (\w[\w0-9_]*) = (.*);$/)) {
+						console.log(m);
+					} else if (m = line.match(/(\w[\w0-9_]*) = (.*)/)) {
+						console.log(m);
+					}
+					return line;
+				}).join("\n");
+			}
+		</script>
+	</body>
+</html>
