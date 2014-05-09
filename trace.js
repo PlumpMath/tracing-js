@@ -11,6 +11,27 @@ Trace.prototype.traceWrite = function(varName, val) {
 	return val;
 }
 
+Trace.prototype.rollup = function() {
+	return this.traces.reduce(function(states, trace) {
+		switch (trace.type) {
+			case "line":
+				var newState = {line: trace.line, vars: {}};
+				if (states.length > 0) {
+					newState.vars = states[states.length - 1].vars;
+				}
+				states.push(newState);
+				break;
+			case "write":
+				var curState = states[states.length - 1];
+				curState.vars[trace.varName] = trace.value;
+				break;
+			default:
+				throw "unknown type " + trace.type;
+		}
+		return states;
+	}, []);
+}
+
 var currentTrace = null;
 
 Trace.start = function() {
