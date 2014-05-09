@@ -19,7 +19,7 @@
 
 			var tracingCode = null;
 
-			codeEl.oninput = function(ev) {
+			codeEl.onkeyup = function(ev) {
 				try {
 					//resultEl.textContent = transformCode(codeEl.value);
 					var code = codeEl.value.split("\n").map(function (line, lineNumber) {
@@ -32,6 +32,13 @@
 				} catch (e) {
 					console.log(e);
 					resultEl.textContent = e;
+					return;
+				}
+
+				if (ev.ctrlKey && ev.keyCode == 13) { // Ctrl+Enter
+					Trace.start();
+					eval(tracingCode);
+					currentTrace.traces.forEach(function(t) { console.log(t); });
 				}
 			};
 
