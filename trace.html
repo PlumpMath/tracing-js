@@ -3,6 +3,10 @@
 	<head>
 		<title>.trace</title>
 		<meta charset="utf-8" />
+		<style type="text/css">
+			.line { margin-left: 1ex; }
+			.current-line { background-color: #ddd; }
+		</style>
 	</head>
 
 	<body>
@@ -12,6 +16,8 @@ for (var i = 0; i &lt; 10; i = i + 1) {
   sum = sum + i;
 }</textarea>
 		<pre id="result"></pre>
+
+		<div id="traceUI"></div>
 
 		<script src="http://esprima.org/esprima.js"></script>
 		<script src="http://constellation.github.io/escodegen/escodegen.browser.js"></script>
@@ -62,6 +68,11 @@ for (var i = 0; i &lt; 10; i = i + 1) {
 					return line;
 				}).join("\n");
 			}
+		</script>
+		<script src="http://facebook.github.io/react/js/react.js"></script>
+		<script src="trace-ui.js"></script>
+		<script>
+			React.renderComponent(TraceUI({code: codeEl.value}), document.getElementById("traceUI"));
 		</script>
 	</body>
 </html>
