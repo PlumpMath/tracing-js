@@ -6,8 +6,8 @@ Trace.prototype.traceLine = function(lineNo) {
 	this.traces.push({type: "line", line: lineNo});
 }
 
-Trace.prototype.traceWrite = function(varName, val) {
-	this.traces.push({type: "write", varName: varName, value: val});
+Trace.prototype.traceWrite = function(varName, val, init) {
+	this.traces.push({type: "write", varName: varName, value: val, init: init == null ? false : init});
 	return val;
 }
 

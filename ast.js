@@ -20,7 +20,7 @@ function logReadsAndWrites(ast) {
 			break;
 		case "VariableDeclarator":
 			var name = escodegen.generate(ast.id);
-			ast.init = CallExpr(Ident("traceWrite"), [Lit(name), ast.init]);
+			ast.init = CallExpr(Ident("traceWrite"), [Lit(name), ast.init, Lit(true)]);
 			break;
 	}
 	return ast;
