@@ -55,9 +55,9 @@ function LitString(str) {
 }
 
 function isArray(x) {
-	return isObject(x) && x.hasOwnProperty("length");
+	return x instanceof Array;
 }
 
 function isObject(x) {
-	return typeof x == "object";
+	return x instanceof Object;
 }
