@@ -17,7 +17,7 @@ Trace.prototype.rollup = function() {
 			case "line":
 				var newState = {line: trace.line, vars: {}};
 				if (states.length > 0) {
-					newState.vars = states[states.length - 1].vars;
+					newState.vars = clone(states[states.length - 1].vars);
 				}
 				states.push(newState);
 				break;
