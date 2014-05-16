@@ -23,3 +23,7 @@ function clone(obj) {
 
 	throw new Error("Unable to copy obj! Its type isn't supported.");
 }
+
+function mapProperties(obj, fn) {
+	return Object.keys(obj).map(function(k) { return fn(k, obj[k]); });
+}
