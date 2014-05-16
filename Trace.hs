@@ -32,7 +32,7 @@ traceStmt (ForStmt p init Nothing Nothing body) =
     ForStmt p (traceForInit init)
               (Just $ ListExpr p [traceLine p, BoolLit p True])
               (Just $ ListExpr p [traceLine p])
-              (traceStmt body) --(BlockStmt p [(traceStmt body), ExprStmt p $ traceLine p])
+              (traceStmt body)
 traceStmt (VarDeclStmt p ds) = VarDeclStmt p $ map traceVarDecl ds
 traceStmt s = s
 
