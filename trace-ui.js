@@ -9,6 +9,15 @@ function renderTrace(code, trace) {
 	var lines = code.split("\n");
 	var lineNo = trace.line - 1;
 	var currentLine = lines[lineNo];
+	if (trace.pos) {
+		var val = Object.keys(trace.writes).concat(Object.keys(trace.values))[0];
+		var start = currentLine.indexOf(val);
+		currentLine = [
+			currentLine.slice(0, start),
+			wrapInClass("current-expr", val),
+			currentLine.slice(start + val.length, currentLine.length)
+		];
+	}
 	lines[lineNo] = wrapInClass("current-line", currentLine);
 	var reads = mapProperties(trace.reads, function(k, v) {
 		return React.DOM.span(null, "// " + k + " = " + JSON.stringify(v) + "\n");

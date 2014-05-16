@@ -12,10 +12,14 @@ simplePos = (,) <$> sourceLine <*> sourceColumn
 
 varRef p = VarRef p . Id p
 
+prop p = PropId p . Id p
+int p = IntLit p
+toPos p = ObjectLit p [(prop p "line", int p $ sourceLine p), (prop p "col", int p $ sourceColumn p)]
+
 traceLine p = CallExpr p (varRef p "traceLine") [IntLit p $ sourceLine p]
-traceRead p name expr = CallExpr p (varRef p "traceRead") [StringLit p name, expr]
-traceWrite p name expr isInit = CallExpr p (varRef p "traceWrite") [StringLit p name, expr, BoolLit p isInit]
-traceValue p exprStr expr = CallExpr p (varRef p "traceValue") [StringLit p exprStr, expr]
+traceRead p name expr = CallExpr p (varRef p "traceRead") [StringLit p name, expr, toPos p]
+traceWrite p name expr isInit = CallExpr p (varRef p "traceWrite") [StringLit p name, expr, BoolLit p isInit, toPos p]
+traceValue p exprStr expr = CallExpr p (varRef p "traceValue") [StringLit p exprStr, expr, toPos p]
 
 traceStmt :: Statement SourcePos -> Statement SourcePos
 traceStmt (BlockStmt p ss) = BlockStmt p $ map traceStmt ss
