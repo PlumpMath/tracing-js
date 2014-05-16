@@ -15,6 +15,10 @@ Trace.prototype.rollup = function() {
 	return this.traces.reduce(function(states, trace) {
 		switch (trace.type) {
 			case "line":
+				var curState = states[states.length - 1];
+				if (states.length > 0 && Object.keys(curState.writes) == 0) {
+					states.pop();
+				}
 				var newState = {line: trace.line, vars: {}, writes: {}};
 				if (states.length > 0) {
 					newState.vars = clone(states[states.length - 1].vars);
