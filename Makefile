@@ -12,3 +12,6 @@ trace: Main.hs Trace.hs
 trace.release: trace
 	strip --strip-unneeded $<
 	upx $<
+
+trace-server: TraceServer.hs Trace.hs
+	ghc -o trace-server TraceServer.hs
