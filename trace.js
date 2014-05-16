@@ -6,6 +6,11 @@ Trace.prototype.traceLine = function(lineNo) {
 	this.traces.push({type: "line", line: lineNo});
 }
 
+Trace.prototype.traceRead = function(varName, val) {
+	this.traces.push({type: "read", varName: varName, value: val});
+	return val;
+}
+
 Trace.prototype.traceWrite = function(varName, val, init) {
 	this.traces.push({type: "write", varName: varName, value: val, init: init == null ? false : init});
 	return val;
@@ -16,14 +21,18 @@ Trace.prototype.rollup = function() {
 		switch (trace.type) {
 			case "line":
 				var curState = states[states.length - 1];
-				if (states.length > 0 && Object.keys(curState.writes) == 0) {
+				if (states.length > 0 && Object.keys(curState.reads) == 0 && Object.keys(curState.writes) == 0) {
 					states.pop();
 				}
-				var newState = {line: trace.line, vars: {}, writes: {}};
+				var newState = {line: trace.line, vars: {}, reads: {}, writes: {}};
 				if (states.length > 0) {
 					newState.vars = clone(states[states.length - 1].vars);
 				}
 				states.push(newState);
+				break;
+			case "read":
+				var curState = states[states.length - 1];
+				curState.reads[trace.varName] = trace.value;
 				break;
 			case "write":
 				var curState = states[states.length - 1];
@@ -46,4 +55,5 @@ Trace.start = function() {
 }
 
 function traceLine() { currentTrace.traceLine.apply(currentTrace, arguments); }
+function traceRead() { return currentTrace.traceRead.apply(currentTrace, arguments); }
 function traceWrite() { return currentTrace.traceWrite.apply(currentTrace, arguments); }
