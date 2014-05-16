@@ -16,6 +16,11 @@ Trace.prototype.traceWrite = function(varName, val, init) {
 	return val;
 }
 
+Trace.prototype.traceValue = function(expr, val) {
+	this.traces.push({type: "value", expression: expr, value: val});
+	return val;
+}
+
 Trace.prototype.rollup = function() {
 	return this.traces.reduce(function(states, trace) {
 		switch (trace.type) {
@@ -24,7 +29,7 @@ Trace.prototype.rollup = function() {
 				if (states.length > 0 && Object.keys(curState.reads) == 0 && Object.keys(curState.writes) == 0) {
 					states.pop();
 				}
-				var newState = {line: trace.line, vars: {}, reads: {}, writes: {}};
+				var newState = {line: trace.line, vars: {}, reads: {}, writes: {}, values: {}};
 				if (states.length > 0) {
 					newState.vars = clone(states[states.length - 1].vars);
 				}
@@ -40,6 +45,10 @@ Trace.prototype.rollup = function() {
 				if (!trace.init) {
 					curState.writes[trace.varName] = trace.value;
 				}
+				break;
+			case "value":
+				var curState = states[states.length - 1];
+				curState.values[trace.expression] = trace.value;
 				break;
 			default:
 				throw "unknown type " + trace.type;
@@ -57,3 +66,4 @@ Trace.start = function() {
 function traceLine() { currentTrace.traceLine.apply(currentTrace, arguments); }
 function traceRead() { return currentTrace.traceRead.apply(currentTrace, arguments); }
 function traceWrite() { return currentTrace.traceWrite.apply(currentTrace, arguments); }
+function traceValue() { return currentTrace.traceValue.apply(currentTrace, arguments); }
