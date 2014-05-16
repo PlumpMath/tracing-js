@@ -22,7 +22,8 @@ traceStmt (BlockStmt p ss) = BlockStmt p $ map traceStmt ss
 traceStmt (ExprStmt p e) = ExprStmt p $ traceExpr e
 traceStmt (IfStmt p test body alts) = IfStmt p (traceExpr test) (traceStmt body) (traceStmt alts)
 traceStmt (IfSingleStmt p test body) = IfSingleStmt p (traceExpr test) (traceStmt body)
-traceStmt (WhileStmt p test body) = WhileStmt p (traceExpr test) (traceStmt body)
+traceStmt (WhileStmt p test body) =
+    WhileStmt p (ListExpr p [traceLine p, traceExpr test]) (traceStmt body)
 traceStmt (ForStmt p init (Just test) (Just inc) body) =
     ForStmt p (traceForInit init)
               (Just $ ListExpr p [traceLine p, traceExpr test])
