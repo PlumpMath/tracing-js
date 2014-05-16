@@ -11,13 +11,13 @@ function renderTrace(code, trace) {
 	var currentLine = lines[lineNo];
 	lines[lineNo] = wrapInClass("current-line", currentLine);
 	var reads = mapProperties(trace.reads, function(k, v) {
-		return React.DOM.span(null, "// " + k + " -> " + JSON.stringify(v) + "\n");
-	});
-	var writes = mapProperties(trace.writes, function(k, v) {
 		return React.DOM.span(null, "// " + k + " = " + JSON.stringify(v) + "\n");
 	});
+	var writes = mapProperties(trace.writes, function(k, v) {
+		return React.DOM.span(null, "// " + k + " := " + JSON.stringify(v) + "\n");
+	});
 	var values = mapProperties(trace.values, function(k, v) {
-		return React.DOM.span(null, "// " + k + " -> " + JSON.stringify(v) + "\n");
+		return React.DOM.span(null, "// " + k + " : " + JSON.stringify(v) + "\n");
 	});
 	return React.DOM.pre(null,
 		lines.concat(reads, writes, values).map(function(line, n) { return TraceLine({line: line, lineNo: n + 1})}));
