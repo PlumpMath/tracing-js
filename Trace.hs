@@ -10,39 +10,71 @@ import System.Environment (getArgs)
 
 simplePos = (,) <$> sourceLine <*> sourceColumn
 
-traceExpr :: SourcePos -> Expression SourcePos
-traceExpr p = CallExpr p (VarRef p (Id p "traceLine")) [IntLit p $ sourceLine p]
+varRef p = VarRef p . Id p
 
-traceStmt :: SourcePos -> Statement SourcePos
-traceStmt p = ExprStmt p $ traceExpr p
+traceLine p = CallExpr p (varRef p "traceLine") [IntLit p $ sourceLine p]
+traceRead p name expr = CallExpr p (varRef p "traceRead") [StringLit p name, expr]
+traceWrite p name expr isInit = CallExpr p (varRef p "traceWrite") [StringLit p name, expr, BoolLit p isInit]
+traceValue p exprStr expr = CallExpr p (varRef p "traceValue") [StringLit p exprStr, expr]
 
-insertTraceLine :: Statement SourcePos -> Statement SourcePos
-insertTraceLine (ForStmt p init test expr body) = ForStmt p init (exprWithTrace test) (exprWithTrace expr) body
-    where exprWithTrace = Just . maybe (ListExpr p [traceExpr p]) (ListExpr p . insert [traceExpr p])
-insertTraceLine s = s
+traceStmt :: Statement SourcePos -> Statement SourcePos
+traceStmt (BlockStmt p ss) = BlockStmt p $ map traceStmt ss
+traceStmt (ExprStmt p e) = ExprStmt p $ traceExpr e
+traceStmt (IfStmt p test body alts) = IfStmt p (traceExpr test) (traceStmt body) (traceStmt alts)
+traceStmt (IfSingleStmt p test body) = IfSingleStmt p (traceExpr test) (traceStmt body)
+traceStmt (WhileStmt p test body) = WhileStmt p (traceExpr test) (traceStmt body)
+traceStmt (ForStmt p init (Just test) (Just inc) body) =
+    ForStmt p (traceForInit init)
+              (Just $ ListExpr p [traceLine p, traceExpr test])
+              (Just $ ListExpr p [traceLine p, traceExpr inc])
+              (traceStmt body)
+traceStmt (ForStmt p init Nothing Nothing body) =
+    ForStmt p (traceForInit init)
+              (Just $ ListExpr p [traceLine p, BoolLit p True])
+              (Just $ ListExpr p [traceLine p])
+              (traceStmt body) --(BlockStmt p [(traceStmt body), ExprStmt p $ traceLine p])
+traceStmt (VarDeclStmt p ds) = VarDeclStmt p $ map traceVarDecl ds
+traceStmt s = s
 
-insert :: [a] -> a -> [a]
-insert xs x = xs ++ [x]
+traceExpr :: Expression SourcePos -> Expression SourcePos
+traceExpr (ArrayLit p es) = ArrayLit p $ map traceExpr es
+traceExpr (ObjectLit p ds) = ObjectLit p $ map tracePropDefs ds
+    where tracePropDefs (p, expr) = (p, traceExpr expr)
+traceExpr e@(VarRef p (Id _ name)) = traceRead p name e
+traceExpr e@(DotRef p _ _) = traceRead p (pp e) e
+traceExpr e@(BracketRef p _ _) = traceRead p (pp e) e
+traceExpr e@(UnaryAssignExpr p _ _) = traceWrite p (pp e) e False
+traceExpr e@(InfixExpr p op l r) = traceValue p (pp e) $ InfixExpr p op (traceExpr l) (traceExpr r)
+traceExpr (AssignExpr p op l r) = AssignExpr p op l $ traceWrite p (pp l) (traceExpr r) False
+traceExpr e@(CallExpr p name args) | not (ignoreCall name) = traceValue p (pp e) $ CallExpr p name $ map traceExpr args
+traceExpr (FuncExpr p name args body) = FuncExpr p name args $ map traceStmt body
+traceExpr e = e
 
-traceLine :: Statement SourcePos -> Statement SourcePos
-traceLine stmt =
-    if col == 1
-    then insertTraceLine stmt
-    else stmt
-  where col = sourceColumn . getAnnotation $ stmt
+ignoreCall (VarRef _ (Id _ name)) = name == "traceLine"
+ignoreCall _ = False
+
+traceCases (CaseClause p label body) = CaseClause p (traceExpr label) $ map traceStmt body
+traceCases (CaseDefault p body) = CaseDefault p $ map traceStmt body
+
+traceForInit (VarInit ds) = VarInit $ map traceVarDecl ds
+traceForInit (ExprInit e) = ExprInit $ traceExpr e
+traceForInit i = i
+
+traceVarDecl (VarDecl p id@(Id _ name) (Just expr)) =
+    VarDecl p id . Just $ traceWrite p name expr True
+traceVarDecl v = v
+
+pp :: (Pretty a) => a -> String
+pp = (`displayS` "") . renderPretty 1.0 100 . prettyPrint
 
 type JSCode = String
 
-traceLinesSimple :: JSCode -> JSCode
-traceLinesSimple = unlines . map addTrace . zip [1..] . lines
-    where addTrace (n, line) = "traceLine(" ++ (show n) ++ "); " ++ line
+traceJSLines :: JSCode -> JSCode
+traceJSLines = unlines . map traceJSLine . zip [1..] . lines
+    where traceJSLine (n, line) = "traceLine(" ++ (show n) ++ "); " ++ line
 
-traceLines :: JSCode -> JSCode
-traceLines c = either (const c) id $ addTrace c
-    where addTrace = fmap (prettyPrint' . map insertTraceLine . unJavaScript) . parseFromString . traceLinesSimple
-
-prettyPrint' :: Pretty a => a -> String
-prettyPrint' = (`displayS` "") . renderPretty 1.0 100 . prettyPrint
+traceJS :: JSCode -> JSCode
+traceJS c = either (const c) (pp . map traceStmt . unJavaScript) . parseFromString $ traceJSLines c
 
 main :: IO ()
-main = getArgs >>= readFile . head >>= putStrLn . traceLines
+main = getArgs >>= readFile . head >>= putStrLn . traceJS
