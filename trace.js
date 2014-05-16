@@ -32,7 +32,7 @@ Trace.prototype.rollup = function() {
 	}, []);
 }
 
-var currentTrace = null;
+var currentTrace = new Trace();
 
 Trace.start = function() {
 	currentTrace = new Trace();
