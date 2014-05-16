@@ -42,9 +42,7 @@ Trace.prototype.rollup = function() {
 			case "write":
 				var curState = states[states.length - 1];
 				curState.vars[trace.varName] = trace.value;
-				if (!trace.init) {
-					curState.writes[trace.varName] = trace.value;
-				}
+				curState.writes[trace.varName] = trace.value;
 				break;
 			case "value":
 				var curState = states[states.length - 1];
