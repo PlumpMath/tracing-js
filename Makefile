@@ -6,8 +6,8 @@ deps:
 	
 	curl -o lib/react.js http://facebook.github.io/react/js/react.js
 
-trace: Trace.hs
-	ghc -o trace Trace.hs
+trace: Main.hs Trace.hs
+	ghc -o trace Main.hs
 
 trace.release: trace
 	strip --strip-unneeded $<

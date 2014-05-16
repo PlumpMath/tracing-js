@@ -1,3 +1,5 @@
+module Trace where
+
 import Control.Applicative
 
 import Language.ECMAScript3
@@ -5,8 +7,6 @@ import Language.ECMAScript3.PrettyPrint (Pretty, prettyPrint)
 import Language.ECMAScript3.Syntax.Annotations (getAnnotation, reannotate)
 import Text.Parsec.Pos (sourceLine, sourceColumn)
 import Text.PrettyPrint.Leijen (Doc, displayS, renderPretty)
-
-import System.Environment (getArgs)
 
 simplePos = (,) <$> sourceLine <*> sourceColumn
 
@@ -75,6 +75,3 @@ traceJSLines = unlines . map traceJSLine . zip [1..] . lines
 
 traceJS :: JSCode -> JSCode
 traceJS c = either (const c) (pp . map traceStmt . unJavaScript) . parseFromString $ traceJSLines c
-
-main :: IO ()
-main = getArgs >>= readFile . head >>= putStrLn . traceJS
