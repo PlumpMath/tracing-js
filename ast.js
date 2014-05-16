@@ -18,6 +18,9 @@ function logReadsAndWrites(ast) {
 			var name = escodegen.generate(ast.left);
 			ast.right = CallExpr(Ident("traceWrite"), [Lit(name), ast.right]);
 			break;
+		case "UpdateExpression":
+			var name = escodegen.generate(ast);
+			return CallExpr(Ident("traceWrite"), [Lit(name), ast]);
 		case "VariableDeclarator":
 			var name = escodegen.generate(ast.id);
 			ast.init = CallExpr(Ident("traceWrite"), [Lit(name), ast.init, Lit(true)]);
