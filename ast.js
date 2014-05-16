@@ -5,7 +5,7 @@ function transformAST(fn, ast) {
 		var val = ast[prop];
 		if (isArray(val)) {
 			ast[prop] = val.map(curriedTransform);
-		} else if (isObject(val)) {
+		} else if (isObject(val) && val.type) {
 			ast[prop] = curriedTransform(val);
 		}
 	}
