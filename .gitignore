@@ -1,2 +1,6 @@
 bower_components
 lib
+
+trace
+*.hi
+*.o
