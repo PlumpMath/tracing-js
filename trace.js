@@ -15,7 +15,7 @@ Trace.prototype.rollup = function() {
 	return this.traces.reduce(function(states, trace) {
 		switch (trace.type) {
 			case "line":
-				var newState = {line: trace.line, vars: {}};
+				var newState = {line: trace.line, vars: {}, writes: {}};
 				if (states.length > 0) {
 					newState.vars = clone(states[states.length - 1].vars);
 				}
@@ -24,6 +24,9 @@ Trace.prototype.rollup = function() {
 			case "write":
 				var curState = states[states.length - 1];
 				curState.vars[trace.varName] = trace.value;
+				if (!trace.init) {
+					curState.writes[trace.varName] = trace.value;
+				}
 				break;
 			default:
 				throw "unknown type " + trace.type;
