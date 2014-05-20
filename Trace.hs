@@ -1,6 +1,8 @@
 module Trace where
 
 import Control.Applicative
+import Control.Monad (liftM)
+import Data.Maybe (fromMaybe)
 
 import Language.ECMAScript3
 import Language.ECMAScript3.PrettyPrint (Pretty, prettyPrint)
@@ -28,15 +30,10 @@ traceStmt (IfStmt p test body alts) = IfStmt p (traceExpr test) (traceStmt body)
 traceStmt (IfSingleStmt p test body) = IfSingleStmt p (traceExpr test) (traceStmt body)
 traceStmt (WhileStmt p test body) =
     WhileStmt p (ListExpr p [traceLine p, traceExpr test]) (traceStmt body)
-traceStmt (ForStmt p init (Just test) (Just inc) body) =
+traceStmt (ForStmt p init test inc body) =
     ForStmt p (traceForInit init)
-              (Just $ ListExpr p [traceLine p, traceExpr test])
-              (Just $ ListExpr p [traceLine p, traceExpr inc])
-              (traceStmt body)
-traceStmt (ForStmt p init Nothing Nothing body) =
-    ForStmt p (traceForInit init)
-              (Just $ ListExpr p [traceLine p, BoolLit p True])
-              (Just $ ListExpr p [traceLine p])
+              (Just $ ListExpr p $ traceLine p : fromMaybe [] (liftM ((:[]) . traceExpr) test))
+              (Just $ ListExpr p $ traceLine p : fromMaybe [] (liftM ((:[]) . traceExpr) inc))
               (traceStmt body)
 traceStmt (VarDeclStmt p ds) = VarDeclStmt p $ map traceVarDecl ds
 traceStmt (FunctionStmt p name args body) = FunctionStmt p name args $ map traceStmt body
