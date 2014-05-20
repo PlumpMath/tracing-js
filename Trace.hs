@@ -39,6 +39,7 @@ traceStmt (ForStmt p init Nothing Nothing body) =
               (Just $ ListExpr p [traceLine p])
               (traceStmt body)
 traceStmt (VarDeclStmt p ds) = VarDeclStmt p $ map traceVarDecl ds
+traceStmt (FunctionStmt p name args body) = FunctionStmt p name args $ map traceStmt body
 traceStmt s = s
 
 traceExpr :: Expression SourcePos -> Expression SourcePos
