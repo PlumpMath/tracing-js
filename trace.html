@@ -32,7 +32,8 @@
 				if (ev.ctrlKey && ev.keyCode == 13) { // Ctrl+Enter
 					var code = encodeURIComponent(codeEl.value);
 					var xhr = new XMLHttpRequest();
-					xhr.open("GET", "http://localhost:3001/?code=" + code);
+					var host = location.host == "" ? "localhost" : location.host;
+					xhr.open("GET", "http://" + host + ":5001/?code=" + code);
 					xhr.onreadystatechange = function() {
 						if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
 							var tracingCode = xhr.responseText;
