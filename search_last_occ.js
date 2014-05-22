@@ -3,6 +3,11 @@ var m = pattern.length;
 var string  = "Hello, World!";
 var n = string.length;
 
+var last_occ = {};
+for (var k = 0; k < m - 2; k++) {
+    last_occ[pattern[k]] = m - 1 - k;
+}
+
 var i = 0;
 while (i < n - m) {
     var j = 0;
@@ -13,5 +18,5 @@ while (i < n - m) {
     if (j == m) {
 	console.log("found match at " + i);
     }
-    i = i + 1;
+    i = last_occ[string[i + j] || m];
 }
