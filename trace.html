@@ -17,13 +17,12 @@
 		<script src="util.js"></script>
 		<script src="trace.js"></script>
 
-		<script src="search_naive.js"></script>
-		<script src="search_naive.trace2.js"></script>
+		<script src="example-code.js"></script>
 
 		<script src="lib/react.js"></script>
 		<script src="trace-ui.js"></script>
 		<script>
-			var defaultCode = "var pattern = \"Wor\";\nvar string  = \"Hello, World!\";\n\nfor (var i = 0; i < string.length; i++) {\n\tvar j = 0;\n\twhile (j < pattern.length && pattern[j] == string[i + j]) {\n\t\tj++;\n\t}\n\n\tif (j == pattern.length) {\n\t\tconsole.log(\"found match at \" + j);\n\t}\n}\n";
+			var defaultCode = examples['search_naive.js'];
 
 			var codeEl = document.getElementById("code");
 			codeEl.value = codeEl.value || defaultCode;

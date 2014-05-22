@@ -28,7 +28,13 @@ run-server: trace-server
 frontend = \
 	index.html trace.html \
 	util.js trace.js \
+	example-code.js \
 	lib/react.js trace-ui.js \
+
+examples = search_naive.js search_last_occ.js
+
+example-code.js: ${examples}
+	ruby example-code.rb ${examples} > example-code.js
 
 trace.zip: ${frontend} trace-server.release
 	zip trace.zip ${frontend} trace-server
