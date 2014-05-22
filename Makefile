@@ -17,3 +17,18 @@ trace.release: trace
 
 trace-server: TraceServer.hs Trace.hs
 	ghc -o trace-server TraceServer.hs
+
+trace-server.release: trace-server
+	strip --strip-unneeded $<
+	upx $<
+
+run-server: trace-server
+	./trace-server 5001
+
+frontend = \
+	index.html trace.html \
+	util.js trace.js \
+	lib/react.js trace-ui.js \
+
+trace.zip: ${frontend} trace-server.release
+	zip trace.zip ${frontend} trace-server

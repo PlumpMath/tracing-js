@@ -3,5 +3,6 @@ lib
 
 trace
 trace-server
+trace.zip
 *.hi
 *.o
