@@ -1,3 +1,5 @@
+all: deps trace trace-server
+
 deps:
 	mkdir -p lib
 	
