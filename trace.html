@@ -12,6 +12,7 @@
 
 	<body>
 		<textarea id="code" rows="20" cols="80"></textarea>
+		<select id="examples"></select>
 		<div id="trace"></div>
 
 		<script src="util.js"></script>
@@ -41,6 +42,18 @@
 					}
 					xhr.send();
 				}
+			}
+
+			var examplesEl = document.getElementById("examples");
+			examples.all.forEach(function(example) {
+				var el = document.createElement("option");
+				el.textContent = el.value = example;
+				examplesEl.appendChild(el);
+			});
+
+			examplesEl.onchange = function() {
+			  codeEl.value = examples[examplesEl.value];
+			  traceComponent == null;
 			}
 
 			var code = codeEl.value;
