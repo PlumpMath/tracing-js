@@ -32,3 +32,6 @@ frontend = \
 
 trace.zip: ${frontend} trace-server.release
 	zip trace.zip ${frontend} trace-server
+
+clean:
+	rm -f trace.zip trace trace-server *.o *.hi
