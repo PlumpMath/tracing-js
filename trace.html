@@ -4,75 +4,84 @@
 		<title>.trace</title>
 		<meta charset="utf-8" />
 		<style type="text/css">
-			.line { margin-left: 1ex; }
+			.line { margin-left: 1ex; width: 80ex; }
 			.current-line { background-color: #ddd; }
+			.current-expr { background-color: #aaa; }
 		</style>
 	</head>
 
 	<body>
-		<textarea id="code" cols="80" rows="20">var sum = 0;
+		<textarea id="code" rows="20" cols="80"></textarea>
+		<div id="trace"></div>
 
-for (var i = 0; i &lt; 10; i = i + 1) {
-  sum = sum + i;
-}</textarea>
-		<pre id="result"></pre>
-
-		<div id="traceUI"></div>
-
-		<script src="lib/esprima.js"></script>
-		<script src="lib/escodegen.js"></script>
-		<script src="ast.js"></script>
+		<script src="util.js"></script>
 		<script src="trace.js"></script>
-		<script>
-			var codeEl = document.getElementById("code");
-			var resultEl = document.getElementById("result");
 
-			var tracingCode = null;
+		<script src="search_naive.js"></script>
+		<script src="search_naive.trace2.js"></script>
 
-			codeEl.onkeyup = function(ev) {
-				try {
-					//resultEl.textContent = transformCode(codeEl.value);
-					var code = codeEl.value.split("\n").map(function (line, lineNumber) {
-						return "traceLine(" + (lineNumber + 1) + "); " + line;
-					}).join("\n");
-					var ast = esprima.parse(code);
-					var transformed = transformAST(logReadsAndWrites, ast);
-					resultEl.textContent = tracingCode = escodegen.generate(transformed);
-					resultEl.textContent += "\n--\n" + JSON.stringify(transformed, null, "  ");
-				} catch (e) {
-					console.log(e);
-					resultEl.textContent = e;
-					return;
-				}
-
-				if (ev.ctrlKey && ev.keyCode == 13) { // Ctrl+Enter
-					Trace.start();
-					eval(tracingCode);
-					currentTrace.traces.forEach(function(t) { console.log(t); });
-				}
-			};
-
-			function pp(obj) {
-				return JSON.stringify(obj, null, "    ");
-			}
-
-			function transformCode(code) {
-				var lines = code.split("\n");
-				return lines.map(function(line) {
-					var m;
-					if (m = line.match(/^var (\w[\w0-9_]*) = (.*);$/)) {
-						console.log(m);
-					} else if (m = line.match(/(\w[\w0-9_]*) = (.*)/)) {
-						console.log(m);
-					}
-					return line;
-				}).join("\n");
-			}
-		</script>
 		<script src="lib/react.js"></script>
 		<script src="trace-ui.js"></script>
 		<script>
-			React.renderComponent(TraceUI({code: codeEl.value}), document.getElementById("traceUI"));
+			var defaultCode = "var pattern = \"Wor\";\nvar string  = \"Hello, World!\";\n\nfor (var i = 0; i < string.length; i++) {\n\tvar j = 0;\n\twhile (j < pattern.length && pattern[j] == string[i + j]) {\n\t\tj++;\n\t}\n\n\tif (j == pattern.length) {\n\t\tconsole.log(\"found match at \" + j);\n\t}\n}\n";
+
+			var codeEl = document.getElementById("code");
+			codeEl.value = codeEl.value || defaultCode;
+
+			codeEl.onkeydown = function(ev) {
+				if (ev.ctrlKey && ev.keyCode == 13) { // Ctrl+Enter
+					var code = encodeURIComponent(codeEl.value);
+					var xhr = new XMLHttpRequest();
+					xhr.open("GET", "http://localhost:3001/?code=" + code);
+					xhr.onreadystatechange = function() {
+						if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+							var tracingCode = xhr.responseText;
+							runTrace(tracingCode);
+						}
+					}
+					xhr.send();
+				}
+			}
+
+			var code = codeEl.value;
+			var rollup = [];
+			var pos = 0;
+
+			function runTrace(newCode) {
+				Trace.start();
+				eval(newCode);
+				code = codeEl.value;
+				rollup = currentTrace.rollup();
+				pos = 0;
+				if (traceComponent == null) {
+					traceComponent = React.renderComponent(TraceUI2({code: code, trace: rollup[0]}), traceEl);
+				}
+				renderPos();
+			}
+
+			var traceEl = document.getElementById("trace");
+			var traceComponent = null;
+
+			function renderPos() {
+				traceComponent.setProps({code: code, trace: rollup[pos]});
+			}
+
+			document.onkeydown = function(ev) {
+				if (document.activeElement == codeEl) {
+					return;
+				}
+
+				switch (ev.keyCode) {
+					case 37:
+						pos = Math.max(0, pos - 1);
+						renderPos();
+						break;
+					case 39:
+						pos = Math.min(rollup.length - 1, pos + 1);
+						renderPos();
+						break;
+				}
+			}
 		</script>
 	</body>
 </html>

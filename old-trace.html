@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+	<head>
+		<title>.trace</title>
+		<meta charset="utf-8" />
+		<style type="text/css">
+			.line { margin-left: 1ex; }
+			.current-line { background-color: #ddd; }
+		</style>
+	</head>
+
+	<body>
+		<textarea id="code" cols="80" rows="20">var sum = 0;
+
+for (var i = 0; i &lt; 10; i = i + 1) {
+  sum = sum + i;
+}</textarea>
+		<pre id="result"></pre>
+
+		<div id="traceUI"></div>
+
+		<script src="lib/esprima.js"></script>
+		<script src="lib/escodegen.js"></script>
+		<script src="ast.js"></script>
+		<script src="trace.js"></script>
+		<script>
+			var codeEl = document.getElementById("code");
+			var resultEl = document.getElementById("result");
+
+			var tracingCode = null;
+
+			codeEl.onkeyup = function(ev) {
+				try {
+					//resultEl.textContent = transformCode(codeEl.value);
+					var code = codeEl.value.split("\n").map(function (line, lineNumber) {
+						return "traceLine(" + (lineNumber + 1) + "); " + line;
+					}).join("\n");
+					var ast = esprima.parse(code);
+					var transformed = transformAST(logReadsAndWrites, ast);
+					resultEl.textContent = tracingCode = escodegen.generate(transformed);
+					resultEl.textContent += "\n--\n" + JSON.stringify(transformed, null, "  ");
+				} catch (e) {
+					console.log(e);
+					resultEl.textContent = e;
+					return;
+				}
+
+				if (ev.ctrlKey && ev.keyCode == 13) { // Ctrl+Enter
+					Trace.start();
+					eval(tracingCode);
+					currentTrace.traces.forEach(function(t) { console.log(t); });
+				}
+			};
+
+			function pp(obj) {
+				return JSON.stringify(obj, null, "    ");
+			}
+
+			function transformCode(code) {
+				var lines = code.split("\n");
+				return lines.map(function(line) {
+					var m;
+					if (m = line.match(/^var (\w[\w0-9_]*) = (.*);$/)) {
+						console.log(m);
+					} else if (m = line.match(/(\w[\w0-9_]*) = (.*)/)) {
+						console.log(m);
+					}
+					return line;
+				}).join("\n");
+			}
+		</script>
+		<script src="lib/react.js"></script>
+		<script src="trace-ui.js"></script>
+		<script>
+			React.renderComponent(TraceUI({code: codeEl.value}), document.getElementById("traceUI"));
+		</script>
+	</body>
+</html>
