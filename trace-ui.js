@@ -28,8 +28,34 @@ function renderTrace(code, trace) {
 	var values = mapProperties(trace.values, function(k, v) {
 		return React.DOM.span(null, "// " + k + " : " + JSON.stringify(v) + "\n");
 	});
-	return React.DOM.pre(null,
+	var traceView = React.DOM.pre(null,
 		lines.concat(reads, writes, values).map(function(line, n) { return TraceLine({line: line, lineNo: n + 1})}));
+	if (isSearch(trace)) {
+		return React.DOM.div(null, renderSearch(trace.vars), traceView);
+	} else {
+		return React.DOM.div(null, traceView);
+	}
+}
+
+function isSearch(trace) {
+	return trace.vars && trace.vars.string && trace.vars.pattern && "i" in trace.vars;
+}
+
+function renderSearch(vars) {
+  function wrap(str) {
+		return React.DOM.span(null, str);
+	}
+	var string = vars.string.split("").map(wrap);
+	var padding = " ".repeat(vars.i);
+	var pattern = (padding + vars.pattern).split("").map(wrap);
+
+	if ("i" in vars && "j" in vars) {
+		var i = vars.i, j = vars.j;
+		var state = vars.pattern[j] == vars.string[i + j];
+		var stateClass = state ? "success" : "failure";
+		string[i + j] = React.DOM.span({className: stateClass}, vars.string[i + j]);
+	}
+	return React.DOM.pre(null, string, "\n", pattern);
 }
 
 var TraceUI2 = React.createClass({
