@@ -9,6 +9,15 @@ to understand what they do and why they do it.
 
 There's a version of this available at <http://papill0n.org/trace>.
 
+## Quickstart
+
+You need the [Haskell platform](http://haskell.org/platform) installed.
+
+    $ make run-server
+
+Then open [trace.html](./trace.html) in your browser. (And of course
+write some code.)
+
 ## Implementation
 
 * a [library](./Trace.hs) that transforms given code into a traced version of it
@@ -38,3 +47,19 @@ There's a version of this available at <http://papill0n.org/trace>.
 
 * a [frontend](./trace.html) that allows you to write some code, send
   it to the server, execute it and then look at the trace
+
+## Known imitations
+
+* it only traces reads and writes
+* some statements aren't traced yet (e.g. `try/catch`, labels; but easy
+  to add, I just didn't need them yet. for now they're ignored.)
+* assignments are displayed quite weird
+
+    E.g. with `i = 0`, `i++` will display as `i++ := 0` even though it
+    probably should display `i++ := 1` or `i := 1`.
+
+    `i += 3` displays as `i += 3 := 3`.
+
+    (This might get fixed if I find (or need) a better way to display
+    variables, preferrably inline, not in comments as done now.
+    Ideas & suggestions welcome.)
