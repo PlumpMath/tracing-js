@@ -49,7 +49,7 @@ function renderSearch(vars) {
 	var padding = " ".repeat(vars.i);
 	var pattern = (padding + vars.pattern).split("").map(wrap);
 
-	if ("i" in vars && "j" in vars) {
+	if ("i" in vars && "j" in vars && vars.j < vars.pattern.length) {
 		var i = vars.i, j = vars.j;
 		var state = vars.pattern[j] == vars.string[i + j];
 		var stateClass = state ? "success" : "failure";
