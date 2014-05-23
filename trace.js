@@ -7,17 +7,17 @@ Trace.prototype.traceLine = function(lineNo) {
 }
 
 Trace.prototype.traceRead = function(varName, val) {
-	this.traces.push({type: "read", varName: varName, value: val});
+	this.traces.push({type: "read", varName: varName, value: clone(val)});
 	return val;
 }
 
 Trace.prototype.traceWrite = function(varName, val, init, pos) {
-	this.traces.push({type: "write", varName: varName, value: val, init: init == null ? false : init, pos: pos});
+	this.traces.push({type: "write", varName: varName, value: clone(val), init: init == null ? false : init, pos: pos});
 	return val;
 }
 
 Trace.prototype.traceValue = function(expr, val, pos) {
-	this.traces.push({type: "value", expression: expr, value: val, pos: pos});
+	this.traces.push({type: "value", expression: expr, value: clone(val), pos: pos});
 	return val;
 }
 
