@@ -48,7 +48,7 @@ traceExpr e@(DotRef p _ _) = traceRead p (pp e) e
 traceExpr e@(BracketRef p _ _) = traceRead p (pp e) e
 traceExpr e@(UnaryAssignExpr p _ _) = traceWrite p (pp e) e False
 traceExpr e@(InfixExpr p op l r) = traceValue p (pp e) $ InfixExpr p op (traceExpr l) (traceExpr r)
-traceExpr (AssignExpr p op l r) = AssignExpr p op l $ traceWrite p (pp l) (traceExpr r) False
+traceExpr (AssignExpr p op l r) = AssignExpr p op (traceLValue l) $ traceWrite p (pp l) (traceExpr r) False
 traceExpr e@(CallExpr p name args) | not (ignoreCall name) = traceValue p (pp e) $ CallExpr p name $ map traceExpr args
 traceExpr (FuncExpr p name args body) = FuncExpr p name args $ map traceStmt body
 traceExpr e = e
@@ -62,6 +62,9 @@ traceCases (CaseDefault p body) = CaseDefault p $ map traceStmt body
 traceForInit (VarInit ds) = VarInit $ map traceVarDecl ds
 traceForInit (ExprInit e) = ExprInit $ traceExpr e
 traceForInit i = i
+
+traceLValue (LBracket p l r) = LBracket p (traceExpr l) (traceExpr r)
+traceLValue lval = lval
 
 traceVarDecl (VarDecl p id@(Id _ name) (Just expr)) =
     VarDecl p id . Just $ traceWrite p name expr True
