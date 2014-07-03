@@ -67,11 +67,12 @@
 
 			function runTrace(newCode) {
 				Trace.start();
-				var pattern = document.getElementById("pattern").value, m = pattern.length;
-				var text = document.getElementById("text").value, n = text.length;
+				traceLine(-1);
+				var pattern = document.getElementById("pattern").value, m = pattern.length; traceWrite("pattern", pattern);
+				var text = document.getElementById("text").value, n = text.length; traceWrite("text", text);
 				eval(newCode);
 				code = codeEl.value;
-				rollup = currentTrace.rollup();
+				rollup = currentTrace.rollup().slice(1);
 				pos = 0;
 				if (traceComponent == null) {
 					traceComponent = React.renderComponent(TraceUI2({code: code, trace: rollup[0]}), traceEl);
