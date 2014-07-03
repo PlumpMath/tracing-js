@@ -18,5 +18,5 @@ while (i < n - m) {
     if (j == m) {
 	console.log("found match at " + i);
     }
-    i = i + (last_occ[string[i + j]] || m);
+    i = i + (last_occ[string[i + m - 1]] || m);
 }
