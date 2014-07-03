@@ -1,8 +1,3 @@
-var pattern = "Wor";
-var m = pattern.length;
-var string = "Hello, World!";
-var n = string.length;
-
 var bord = [-1], t = -1;
 for (var j = 1; j <= m; j++) {
     while (t >= 0 && pattern[t] != pattern[j - 1]) {
@@ -14,7 +9,7 @@ for (var j = 1; j <= m; j++) {
 
 var i = 0, j = 0;
 while (i <= n - m) {
-    while (j < m && pattern[j] == string[i + j]) {
+    while (j < m && pattern[j] == text[i + j]) {
         j = j + 1;
     }
     if (j == m) {

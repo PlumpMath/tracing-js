@@ -1,8 +1,3 @@
-var pattern = "Wor";
-var m = pattern.length;
-var string = "Hello, World!";
-var n = string.length;
-
 var suffix = Array.apply(null, Array(m)).map(function() { return 0; });
 suffix[m - 1] = m;
 var f = 0, g = m - 1;
@@ -40,7 +35,7 @@ for (var k = 0; k <= m - 2; k++) {
 var i = 0, j;
 while (i <= n - m) {
     j = m - 1;
-    while (j >= 0 && pattern[j] == string[i + j]) {
+    while (j >= 0 && pattern[j] == text[i + j]) {
         j = j - 1;
     }
 
@@ -48,6 +43,6 @@ while (i <= n - m) {
         console.log("found match at " + i);
         i = i + 1;
     } else {
-        i = i + Math.max(bmShift[j >= 0 ? j : 0], (badCharShift[string[i + j]] || m) - m + j + 1);
+        i = i + Math.max(bmShift[j >= 0 ? j : 0], (badCharShift[text[i + j]] || m) - m + j + 1);
     }
 }

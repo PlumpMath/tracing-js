@@ -1,8 +1,3 @@
-var pattern = "Wor";
-var m = pattern.length;
-var string = "Hello, World!";
-var n = string.length;
-
 var suffix = Array.apply(null, Array(m)).map(function() { return 0; });
 suffix[m - 1] = m;
 var f = 0, g = m - 1;
@@ -52,7 +47,7 @@ while (j < m) {
 var i = 0, j, memory = 0;
 while (i <= n - m) {
     j = m - 1;
-    while (j >= memory && pattern[j] == string[i + j]) {
+    while (j >= memory && pattern[j] == text[i + j]) {
         j = j - 1;
     }
 
@@ -62,6 +57,6 @@ while (i <= n - m) {
         i = i + m - bord[m];
     } else {
         memory = 0;
-        i = i + Math.max(bmShift[j >= 0 ? j : 0], (badCharShift[string[i + j]] || m) - m + j + 1);
+        i = i + Math.max(bmShift[j >= 0 ? j : 0], (badCharShift[text[i + j]] || m) - m + j + 1);
     }
 }
