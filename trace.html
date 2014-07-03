@@ -30,6 +30,9 @@
 		<script>
 			var defaultCode = examples['search_naive.js'];
 
+			var patternEl = document.getElementById("pattern");
+			var textEl = document.getElementById("text");
+
 			var codeEl = document.getElementById("code");
 			codeEl.value = codeEl.value || defaultCode;
 
@@ -68,8 +71,8 @@
 			function runTrace(newCode) {
 				Trace.start();
 				traceLine(-1);
-				var pattern = document.getElementById("pattern").value, m = pattern.length; traceWrite("pattern", pattern);
-				var text = document.getElementById("text").value, n = text.length; traceWrite("text", text);
+				var pattern = patternEl.value, m = pattern.length; traceWrite("pattern", pattern);
+				var text = textEl.value, n = text.length; traceWrite("text", text);
 				eval(newCode);
 				code = codeEl.value;
 				rollup = currentTrace.rollup().slice(1);
@@ -88,7 +91,8 @@
 			}
 
 			document.onkeydown = function(ev) {
-				if (document.activeElement == codeEl) {
+				var focusEl = document.activeElement;
+				if (focusEl == codeEl || focusEl == patternEl || focusEl == textEl) {
 					return;
 				}
 
@@ -96,10 +100,12 @@
 					case 37:
 						pos = Math.max(0, pos - 1);
 						renderPos();
+						ev.preventDefault();
 						break;
 					case 39:
 						pos = Math.min(rollup.length - 1, pos + 1);
 						renderPos();
+						ev.preventDefault();
 						break;
 				}
 			}
