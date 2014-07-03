@@ -9,7 +9,7 @@ for (var k = 0; k < m - 2; k++) {
 }
 
 var i = 0;
-while (i < n - m) {
+while (i <= n - m) {
     var j = 0;
     while (j < m && pattern[j] == string[i + j]) {
 	j = j + 1;
