@@ -42,7 +42,7 @@ function isSearch(trace) {
 }
 
 function renderSearch(vars) {
-  function wrap(str) {
+	function wrap(str) {
 		return React.DOM.span(null, str);
 	}
 	var string = vars.string.split("").map(wrap);
