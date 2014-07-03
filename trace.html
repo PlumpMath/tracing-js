@@ -14,6 +14,8 @@
 	</head>
 
 	<body>
+		Search <input id="pattern" type="text" placeholder="pattern" /> in
+		<input id="text" type="text" placeholder="text" /> using:<br />
 		<textarea id="code" rows="20" cols="80"></textarea>
 		<select id="examples"></select>
 		<div id="trace"></div>
@@ -65,6 +67,8 @@
 
 			function runTrace(newCode) {
 				Trace.start();
+				var pattern = document.getElementById("pattern").value, m = pattern.length;
+				var text = document.getElementById("text").value, n = text.length;
 				eval(newCode);
 				code = codeEl.value;
 				rollup = currentTrace.rollup();

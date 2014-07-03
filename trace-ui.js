@@ -39,28 +39,28 @@ function renderTrace(code, trace) {
 }
 
 function isSearch(trace) {
-	return trace.vars && trace.vars.string && trace.vars.pattern && "i" in trace.vars;
+	return trace.vars && trace.vars.text && trace.vars.pattern && "i" in trace.vars;
 }
 
 function renderSearch(vars) {
 	function wrap(str) {
 		return React.DOM.span(null, str);
 	}
-	var string = vars.string.split("").map(wrap);
+	var text = vars.text.split("").map(wrap);
 	var padding = " ".repeat(vars.i);
 	var pattern = (padding + vars.pattern).split("").map(wrap);
 
 	if ("i" in vars && "j" in vars && vars.j < vars.pattern.length) {
 		var i = vars.i, j = vars.j;
-		var state = vars.pattern[j] == vars.string[i + j];
+		var state = vars.pattern[j] == vars.text[i + j];
 		var stateClass = state ? "success" : "failure";
-		string[i + j] = React.DOM.span({className: stateClass}, vars.string[i + j]);
+		text[i + j] = React.DOM.span({className: stateClass}, vars.text[i + j]);
 	}
-	return React.DOM.pre(null, string, "\n", pattern);
+	return React.DOM.pre(null, text, "\n", pattern);
 }
 
 function renderStats(rawTrace) {
-	var textReads = rawTrace.filter(function(t) { return t.type == "read" && t.varName.startsWith("string["); }).length;
+	var textReads = rawTrace.filter(function(t) { return t.type == "read" && t.varName.startsWith("text["); }).length;
 	return React.DOM.pre(null, "Total steps: ", rawTrace.length, ". Text reads: ", textReads, ".");
 }
 
