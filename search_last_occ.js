@@ -4,7 +4,7 @@ var string  = "Hello, World!";
 var n = string.length;
 
 var last_occ = {};
-for (var k = 0; k < m - 2; k++) {
+for (var k = 0; k <= m - 2; k++) {
     last_occ[pattern[k]] = m - 1 - k;
 }
 
