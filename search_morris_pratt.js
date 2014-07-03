@@ -3,11 +3,8 @@ var m = pattern.length;
 var string = "Hello, World!";
 var n = string.length;
 
-// border
-var bord = [-1];
-var t = -1;
-
-for (var j = 1; j < m; j++) {
+var bord = [-1], t = -1;
+for (var j = 1; j <= m; j++) {
     while (t >= 0 && pattern[t] != pattern[j - 1]) {
         t = bord[t];
     }
