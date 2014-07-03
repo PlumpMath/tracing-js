@@ -31,7 +31,7 @@ frontend = \
 	example-code.js \
 	lib/react.js trace-ui.js \
 
-examples = search_naive.js search_last_occ.js search_morris_pratt.js
+examples = search_naive.js search_last_occ.js search_morris_pratt.js search_boyer_moore.js
 
 example-code.js: ${examples}
 	ruby example-code.rb ${examples} > example-code.js
