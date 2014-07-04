@@ -30,7 +30,7 @@ function renderTrace(code, trace) {
 	});
 	var traceView = React.DOM.pre(null,
 		lines.concat(reads, writes, values).map(function(line, n) { return TraceLine({line: line, lineNo: n + 1})}));
-	var traceStats = renderStats(currentTrace.traces);
+	var traceStats = renderStats(currentTrace.traces, trace.vars.pattern, trace.vars.text);
 	if (isSearch(trace)) {
 		return React.DOM.div(null, traceStats, renderSearch(trace.vars), traceView);
 	} else {
@@ -59,9 +59,10 @@ function renderSearch(vars) {
 	return React.DOM.pre(null, text, "\n", pattern);
 }
 
-function renderStats(rawTrace) {
+function renderStats(rawTrace, pattern, text) {
 	var textReads = rawTrace.filter(function(t) { return t.type == "read" && t.varName.startsWith("text["); }).length;
-	return React.DOM.pre(null, "Total steps: ", rawTrace.length, ". Text reads: ", textReads, ".");
+	return React.DOM.pre(null, "m: " + pattern.length, " n: ", text.length, 
+	                           " Total steps: ", rawTrace.length, ". Text reads: ", textReads, ".");
 }
 
 var TraceUI2 = React.createClass({
