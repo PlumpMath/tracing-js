@@ -7,13 +7,13 @@ for (var j = 1; j <= m; j++) {
     bord[j] = t;
 }
 
-var i = 0, j = 0;
+var c = 0, i = 0, j = 0;
 while (i <= n - m) {
     while (j < m && pattern[j] == text[i + j]) {
         j = j + 1;
     }
     if (j == m) {
-        console.log("found match at " + i);
+        console.log("found match #" + ++c + " at " + i);
     }
     i = i + j - bord[j];
     j = Math.max(0, bord[j]);

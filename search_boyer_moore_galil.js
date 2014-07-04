@@ -44,7 +44,7 @@ while (j < m) {
     bord[j] = t;
 }
 
-var i = 0, j, memory = 0;
+var c = 0, i = 0, j, memory = 0;
 while (i <= n - m) {
     j = m - 1;
     while (j >= memory && pattern[j] == text[i + j]) {
@@ -52,7 +52,7 @@ while (i <= n - m) {
     }
 
     if (j < memory) {
-        console.log("found match at " + i);
+        console.log("found match #" + ++c + " at " + i);
         memory = bord[m];
         i = i + m - bord[m];
     } else {

@@ -32,7 +32,7 @@ for (var k = 0; k <= m - 2; k++) {
     badCharShift[pattern[k]] = m - 1 - k;
 }
 
-var i = 0, j;
+var c = 0, i = 0, j;
 while (i <= n - m) {
     j = m - 1;
     while (j >= 0 && pattern[j] == text[i + j]) {
@@ -40,7 +40,7 @@ while (i <= n - m) {
     }
 
     if (j == -1) {
-        console.log("found match at " + i);
+        console.log("found match #" + ++c + " at " + i);
         i = i + 1;
     } else {
         i = i + Math.max(bmShift[j >= 0 ? j : 0], (badCharShift[text[i + j]] || m) - m + j + 1);

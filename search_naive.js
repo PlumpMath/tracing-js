@@ -1,4 +1,4 @@
-var i = 0;
+var c = 0, i = 0;
 while (i < n - m) {
     var j = 0;
     while (j < m && pattern[j] == text[i + j]) {
@@ -6,7 +6,7 @@ while (i < n - m) {
     }
 
     if (j == m) {
-	console.log("found match at " + i);
+        console.log("found match #" + ++c + " at " + i);
     }
     i = i + 1;
 }

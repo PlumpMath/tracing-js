@@ -3,7 +3,7 @@ for (var k = 0; k <= m - 2; k++) {
     last_occ[pattern[k]] = m - 1 - k;
 }
 
-var i = 0;
+var c = 0, i = 0;
 while (i <= n - m) {
     var j = 0;
     while (j < m && pattern[j] == text[i + j]) {
@@ -11,7 +11,7 @@ while (i <= n - m) {
     }
 
     if (j == m) {
-	console.log("found match at " + i);
+        console.log("found match #" + ++c + " at " + i);
     }
     i = i + (last_occ[text[i + m - 1]] || m);
 }
