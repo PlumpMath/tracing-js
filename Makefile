@@ -16,7 +16,8 @@ trace.release: trace
 	upx $<
 
 trace-server: TraceServer.hs Trace.hs
-	ghc -o trace-server TraceServer.hs
+	cabal build trace-server
+	cp dist/build/trace-server/trace-server .
 
 trace-server.release: trace-server
 	strip --strip-unneeded $<
