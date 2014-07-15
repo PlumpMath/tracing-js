@@ -1,6 +1,10 @@
 bower_components
 lib
 
+.cabal-sandbox
+cabal.sandbox.config
+dist
+
 trace
 trace-server
 trace.zip
