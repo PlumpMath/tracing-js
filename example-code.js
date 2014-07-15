@@ -2,7 +2,7 @@ var examples = {};
 
 examples.all = ["search_naive.js","search_last_occ.js","search_morris_pratt.js","search_knuth_morris_pratt.js","search_boyer_moore.js","search_boyer_moore_galil.js"];
 
-examples['search_naive.js'] = "var c = 0, i = 0;\nwhile (i < n - m) {\n    var j = 0;\n    while (j < m && pattern[j] == text[i + j]) {\n\tj = j + 1;\n    }\n\n    if (j == m) {\n        console.log(\"found match #\" + ++c + \" at \" + i);\n    }\n    i = i + 1;\n}\n";
+examples['search_naive.js'] = "var c = 0, i = 0;\nwhile (i <= n - m) {\n    var j = 0;\n    while (j < m && pattern[j] == text[i + j]) {\n\tj = j + 1;\n    }\n\n    if (j == m) {\n        console.log(\"found match #\" + ++c + \" at \" + i);\n    }\n    i = i + 1;\n}\n";
 
 examples['search_last_occ.js'] = "var last_occ = {};\nfor (var k = 0; k <= m - 2; k++) {\n    last_occ[pattern[k]] = m - 1 - k;\n}\n\nvar c = 0, i = 0;\nwhile (i <= n - m) {\n    var j = 0;\n    while (j < m && pattern[j] == text[i + j]) {\n\tj = j + 1;\n    }\n\n    if (j == m) {\n        console.log(\"found match #\" + ++c + \" at \" + i);\n    }\n    i = i + (last_occ[text[i + m - 1]] || m);\n}\n";
 
