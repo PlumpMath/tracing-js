@@ -27,3 +27,13 @@ function clone(obj) {
 function mapProperties(obj, fn) {
 	return Object.keys(obj).map(function(k) { return fn(k, obj[k]); });
 }
+
+// polyfills
+
+String.prototype.repeat = String.prototype.repeat || function(n) {
+	return new Array(n + 1).join(this);
+}
+
+String.prototype.startsWith = String.prototype.startsWith || function(prefix) {
+	return this.indexOf(prefix) == 0;
+}
